@@ -42,5 +42,10 @@ namespace homework_56.Controllers
                 return View();
             }
         }
+        public IActionResult Details(int id)
+        {
+            var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
+            return View(task);
+        }
     }
 }

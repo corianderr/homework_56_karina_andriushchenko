@@ -20,5 +20,6 @@ namespace homework_56.Models
         public string Executor { get; set; }
         public DateTime? OpenDate { get; set; }
         public DateTime? CloseDate { get; set; }
+        public DateTime? CreationDate { get; set; }
     }
 }

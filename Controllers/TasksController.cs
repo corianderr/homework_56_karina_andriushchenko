@@ -1,4 +1,5 @@
-﻿using homework_56.Models;
+﻿using homework_56.Enums;
+using homework_56.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,10 +17,41 @@ namespace homework_56.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index(SortState sortOrder = SortState.NameAsc)
         {
-            var tasks = _context.Tasks.ToList();
-            return View(tasks);
+            IQueryable<Models.Task> users = _context.Tasks;
+            ViewBag.NameSort = sortOrder == SortState.NameAsc ? SortState.NameDesc : SortState.NameAsc;
+            ViewBag.PrioritySort = sortOrder == SortState.PriorityAsc ? SortState.PriorityDesc : SortState.PriorityAsc;
+            ViewBag.StatusSort = sortOrder == SortState.StatusAsc ? SortState.StatusDesc : SortState.StatusAsc;
+            ViewBag.CreationDateSort = sortOrder == SortState.CreationDateAsc ? SortState.CreationDateDesc : SortState.CreationDateAsc;
+            switch (sortOrder)
+            {
+                case SortState.NameDesc:
+                    users = users.OrderByDescending(s => s.Name);
+                    break;
+                case SortState.PriorityAsc:
+                    users = users.OrderBy(s => s.Priority);
+                    break;
+                case SortState.PriorityDesc:
+                    users = users.OrderByDescending(s => s.Priority);
+                    break;
+                case SortState.StatusAsc:
+                    users = users.OrderBy(s => s.Status);
+                    break;
+                case SortState.StatusDesc:
+                    users = users.OrderByDescending(s => s.Status);
+                    break;
+                case SortState.CreationDateAsc:
+                    users = users.OrderBy(s => s.CreationDate);
+                    break;
+                case SortState.CreationDateDesc:
+                    users = users.OrderByDescending(s => s.CreationDate);
+                    break;
+                default:
+                    users = users.OrderBy(s => s.Name);
+                    break;
+            }
+            return View(await users.AsNoTracking().ToListAsync());
         }
         public IActionResult Create()
         {
@@ -33,6 +65,7 @@ namespace homework_56.Controllers
                 if (task != null)
                 {
                     task.Status = "new";
+                    task.CreationDate = DateTime.Now;
                     _context.Tasks.Add(task);
                     _context.SaveChanges();
                 }

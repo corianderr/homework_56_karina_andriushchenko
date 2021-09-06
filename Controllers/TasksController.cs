@@ -1,5 +1,6 @@
 ﻿using homework_56.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,5 +64,30 @@ namespace homework_56.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+        [HttpGet]
+        [ActionName("Delete")]
+        public async Task<IActionResult> ConfirmDelete(int? id)
+        {
+            if (id != null)
+            {
+                var task = await _context.Tasks.FirstOrDefaultAsync(p => p.Id == id);
+                if (task != null)
+                    return View(task);
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id != null)
+            {
+                var task = new Models.Task { Id = id.Value };
+                _context.Entry(task).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return NotFound();
+        }
+
     }
 }

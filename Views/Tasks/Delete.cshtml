@@ -1,0 +1,11 @@
+﻿@model homework_56.Models.Task
+@{
+    ViewBag.Title = "Confirmation";
+    Layout = "_Layout";
+}
+<h2>Confirm deletion</h2>
+<form method="post" asp-action="Delete" asp-controller="Tasks" asp-route-id="@Model.Id">
+    <p>Are you sure you want to delete @Model.Name task?</p>
+    <input type="submit" value="Yes">
+    <a asp-action="Index" asp-controller="Tasks">No</a>
+</form>

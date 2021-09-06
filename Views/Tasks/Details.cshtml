@@ -20,18 +20,24 @@
             <span style="color:green;">low</span>
         }<br />
         Number: @Model.Id<br />
-        Task's description: <br /> @Model.Description<br /><br />
+        Task's description: <br /> @Model.Description<br />
         @if (Model.Status == "new")
         {
             <a class="btn btn-light" asp-action="Delete" asp-controller="Tasks" asp-route-id="@Model.Id">Delete</a>
             <a class="btn btn-light" asp-action="Open" asp-controller="Tasks" asp-route-id="@Model.Id">Open</a>
         }
-        else if (Model.Status == "open")
+        else if (Model.Status == "opened")
         {
+            <small class="text-muted">
+                Opened @Model.OpenDate.Value.ToString("yyyy-MM-dd hh:mm")<br /><br />
+            </small>
             <a class="btn btn-light" asp-action="Close" asp-controller="Tasks" asp-route-id="@Model.Id">Close</a>
         }
         else
         {
+            <small class="text-muted">
+                Closed @Model.CloseDate.Value.ToString("yyyy-MM-dd hh:mm")<br /><br />
+            </small>
             <a class="btn btn-light" asp-action="Delete" asp-controller="Tasks" asp-route-id="@Model.Id">Delete</a>
         }
     </p>

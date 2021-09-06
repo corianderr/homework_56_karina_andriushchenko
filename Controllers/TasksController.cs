@@ -47,5 +47,21 @@ namespace homework_56.Controllers
             var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
             return View(task);
         }
+        public IActionResult Open(int id)
+        {
+            var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
+            task.OpenDate = DateTime.Now;
+            task.Status = "opened";
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public IActionResult Close(int id)
+        {
+            var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
+            task.CloseDate = DateTime.Now;
+            task.Status = "closed";
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }

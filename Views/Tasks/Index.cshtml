@@ -46,7 +46,7 @@
                             <a class="btn btn-light" asp-action="Delete" asp-controller="Tasks" asp-route-id="@item.Id">Delete</a>
                             <a class="btn btn-light" asp-action="Open" asp-controller="Tasks" asp-route-id="@item.Id">Open</a>
                         }
-                        else if (item.Status == "open")
+                        else if (item.Status == "opened")
                         {
                             <a class="btn btn-light" asp-action="Close" asp-controller="Tasks" asp-route-id="@item.Id">Close</a>
                         }

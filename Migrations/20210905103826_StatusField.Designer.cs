@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using homework_56.Models;
@@ -9,9 +10,10 @@ using homework_56.Models;
 namespace homework_56.Migrations
 {
     [DbContext(typeof(MobileContext))]
-    partial class MobileContextModelSnapshot : ModelSnapshot
+    [Migration("20210905103826_StatusField")]
+    partial class StatusField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

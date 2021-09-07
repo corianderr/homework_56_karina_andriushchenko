@@ -1,5 +1,6 @@
 ﻿using homework_56.Enums;
 using homework_56.Models;
+using homework_56.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,13 +18,37 @@ namespace homework_56.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index(SortState sortOrder = SortState.NameAsc)
+        public IActionResult Index(string name, DateTime? dateFrom, DateTime? dateTo, string priority, string status, string description, SortState sortOrder = SortState.NameAsc)
         {
             IQueryable<Models.Task> users = _context.Tasks;
             ViewBag.NameSort = sortOrder == SortState.NameAsc ? SortState.NameDesc : SortState.NameAsc;
             ViewBag.PrioritySort = sortOrder == SortState.PriorityAsc ? SortState.PriorityDesc : SortState.PriorityAsc;
             ViewBag.StatusSort = sortOrder == SortState.StatusAsc ? SortState.StatusDesc : SortState.StatusAsc;
             ViewBag.CreationDateSort = sortOrder == SortState.CreationDateAsc ? SortState.CreationDateDesc : SortState.CreationDateAsc;
+            if (!String.IsNullOrEmpty(name))
+            {
+                users = users.Where(p => p.Name.Contains(name));
+            }
+            if (dateFrom != null)
+            {
+                users = users.Where(p => p.CreationDate > dateFrom);
+            }
+            if (dateTo != null)
+            {
+                users = users.Where(p => p.CreationDate < dateTo);
+            }
+            if (!String.IsNullOrEmpty(description))
+            {
+                users = users.Where(p => p.Description.Contains(description));
+            }
+            if (!String.IsNullOrEmpty(priority))
+            {
+                users = users.Where(p => p.Priority.Contains(priority));
+            }
+            if (!String.IsNullOrEmpty(status))
+            {
+                users = users.Where(p => p.Status.Contains(status));
+            }
             switch (sortOrder)
             {
                 case SortState.NameDesc:
@@ -51,7 +76,17 @@ namespace homework_56.Controllers
                     users = users.OrderBy(s => s.Name);
                     break;
             }
-            return View(await users.AsNoTracking().ToListAsync());
+            TaskListViewModel tlvm = new TaskListViewModel
+            {
+                Status = status,
+                Priority = priority,
+                DateFrom = dateFrom,
+                DateTo = dateTo,
+                Description = description,
+                Name = name,
+                Tasks = users
+            };
+            return View(tlvm);
         }
         public IActionResult Create()
         {

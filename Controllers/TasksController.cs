@@ -180,5 +180,10 @@ namespace homework_56.Controllers
         {
             return View();
         }
+        public IActionResult MyTasks()
+        {
+            var tasks = _context.Tasks.Where(t => t.ExecutorId ==_userManager.GetUserId(User));
+            return View(tasks.ToList());
+        }
     }
 }

@@ -132,13 +132,19 @@ namespace homework_56.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
-        public IActionResult Close(int id)
+        public async Task<IActionResult> Close(int id)
         {
-            var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
-            task.CloseDate = DateTime.Now;
-            task.Status = "closed";
-            _context.SaveChanges();
-            return RedirectToAction("Index");
+            var task = _context.Tasks.Include(t => t.Executor).FirstOrDefault(t => t.Id == id);
+            var currentUser = _context.Users.FirstOrDefault(u => u.Id == _userManager.GetUserId(User));
+            if (task.ExecutorId == _userManager.GetUserId(User) || await _userManager.IsInRoleAsync(currentUser, "admin"))
+            {
+                task.CloseDate = DateTime.Now;
+                task.Status = "closed";
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+                return RedirectToAction("Stop");
         }
         [HttpGet]
         [ActionName("Delete")]
@@ -147,8 +153,14 @@ namespace homework_56.Controllers
             if (id != null)
             {
                 var task = await _context.Tasks.FirstOrDefaultAsync(p => p.Id == id);
-                if (task != null)
-                    return View(task);
+                var currentUser = _context.Users.FirstOrDefault(u => u.Id == _userManager.GetUserId(User));
+                if (task.CreatorId == _userManager.GetUserId(User) || await _userManager.IsInRoleAsync(currentUser, "admin"))
+                {
+                    if (task != null)
+                        return View(task);
+                }
+                else
+                    return RedirectToAction("Stop");
             }
             return NotFound();
         }
@@ -164,6 +176,9 @@ namespace homework_56.Controllers
             }
             return NotFound();
         }
-
+        public IActionResult Stop()
+        {
+            return View();
+        }
     }
 }

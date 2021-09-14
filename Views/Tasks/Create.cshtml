@@ -7,7 +7,7 @@
 <div class="row">
     <div class="tasks_add_form col-md-6">
         <form asp-action="Create" asp-controller="Tasks" method="post">
-            <div asp-validation-summary="ModelOnly"></div>
+            <div asp-validation-summary="All"></div>
             <div class="form_row">
                 <label for="">
                     Task's 'Name<br />
@@ -32,13 +32,6 @@
                         <textarea asp-for="Description" type="text"></textarea>
                     </label>
                     <span asp-validation-for="Description"></span>
-                </div>
-                <div class="form_row">
-                    <label for="">
-                        Executor's name<br />
-                        <input asp-for="Executor" type="text">
-                    </label>
-                    <span asp-validation-for="Executor"></span>
                 </div>
                 <button type="submit">Add</button>
         </form>

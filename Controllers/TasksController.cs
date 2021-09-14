@@ -1,6 +1,8 @@
 ﻿using homework_56.Enums;
 using homework_56.Models;
 using homework_56.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,12 +14,15 @@ namespace homework_56.Controllers
 {
     public class TasksController : Controller
     {
+        private readonly UserManager<User> _userManager;
         private MobileContext _context;
 
-        public TasksController(MobileContext context)
+        public TasksController(UserManager<User> userManager, MobileContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
+        [Authorize]
         public IActionResult Index(string name, DateTime? dateFrom, DateTime? dateTo, string priority, string status, string description, SortState sortOrder = SortState.NameAsc)
         {
             IQueryable<Models.Task> users = _context.Tasks;
@@ -95,12 +100,13 @@ namespace homework_56.Controllers
         [HttpPost]
         public IActionResult Create(Models.Task task)
         {
+            task.Status = "new";
             if (ModelState.IsValid)
             {
                 if (task != null)
                 {
-                    task.Status = "new";
                     task.CreationDate = DateTime.Now;
+                    task.CreatorId = _userManager.GetUserId(User);
                     _context.Tasks.Add(task);
                     _context.SaveChanges();
                 }
@@ -121,6 +127,8 @@ namespace homework_56.Controllers
             var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
             task.OpenDate = DateTime.Now;
             task.Status = "opened";
+            var UserId = _userManager.GetUserId(User);
+            task.ExecutorId = UserId;
             _context.SaveChanges();
             return RedirectToAction("Index");
         }

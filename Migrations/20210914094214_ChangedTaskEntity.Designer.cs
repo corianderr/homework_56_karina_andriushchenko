@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using homework_56.Models;
@@ -9,9 +10,10 @@ using homework_56.Models;
 namespace homework_56.Migrations
 {
     [DbContext(typeof(MobileContext))]
-    partial class MobileContextModelSnapshot : ModelSnapshot
+    [Migration("20210914094214_ChangedTaskEntity")]
+    partial class ChangedTaskEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,14 +164,20 @@ namespace homework_56.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("CreatorId")
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CreatorId1")
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ExecutorId")
+                    b.Property<int?>("ExecutorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ExecutorId1")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -188,9 +196,9 @@ namespace homework_56.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("CreatorId1");
 
-                    b.HasIndex("ExecutorId");
+                    b.HasIndex("ExecutorId1");
 
                     b.ToTable("Tasks");
                 });
@@ -317,11 +325,11 @@ namespace homework_56.Migrations
                 {
                     b.HasOne("homework_56.Models.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId1");
 
                     b.HasOne("homework_56.Models.User", "Executor")
                         .WithMany()
-                        .HasForeignKey("ExecutorId");
+                        .HasForeignKey("ExecutorId1");
 
                     b.Navigation("Creator");
 

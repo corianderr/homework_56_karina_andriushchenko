@@ -16,10 +16,12 @@ namespace homework_56.Models
         public string Status { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required]
-        public string Executor { get; set; }
         public DateTime? OpenDate { get; set; }
         public DateTime? CloseDate { get; set; }
         public DateTime? CreationDate { get; set; }
+        public string CreatorId { get; set; }
+        public User Creator { get; set; }
+        public string ExecutorId { get; set; }
+        public User Executor { get; set; }
     }
 }

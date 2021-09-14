@@ -28,10 +28,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Tasks" asp-action="Index">All tasks</a>
                         </li>
                         <li>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Tasks" asp-action="MyTasks">My tasks</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Tasks" asp-action="MyTasks">My current tasks</a>
                         </li>
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Tasks" asp-action="FreeTasks">Free tasks</a>
+                        </li>
+                        <li>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Tasks" asp-action="CreatedTasks">Created by me tasks</a>
                         </li>
                         <li>
                             <form method="post" asp-controller="Account" asp-action="Logout">

@@ -1,5 +1,6 @@
 ﻿using homework_56.Enums;
 using homework_56.Models;
+using homework_56.Services;
 using homework_56.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,11 +17,13 @@ namespace homework_56.Controllers
     {
         private readonly UserManager<User> _userManager;
         private MobileContext _context;
+        private TaskService _taskService;
 
-        public TasksController(UserManager<User> userManager, MobileContext context)
+        public TasksController(UserManager<User> userManager, MobileContext context, TaskService taskService)
         {
             _userManager = userManager;
             _context = context;
+            _taskService = taskService;
         }
         [Authorize]
         public IActionResult Index(string name, DateTime? dateFrom, DateTime? dateTo, string priority, string status, string description, SortState sortOrder = SortState.NameAsc)
@@ -107,8 +110,7 @@ namespace homework_56.Controllers
                 {
                     task.CreationDate = DateTime.Now;
                     task.CreatorId = _userManager.GetUserId(User);
-                    _context.Tasks.Add(task);
-                    _context.SaveChanges();
+                    _taskService.AddTask(task);
                 }
                 return RedirectToAction("Index");
             }
@@ -117,9 +119,9 @@ namespace homework_56.Controllers
                 return View();
             }
         }
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
+            var task = await _taskService.GetTask(id);
             return View(task);
         }
         public IActionResult Open(int id)
@@ -130,6 +132,7 @@ namespace homework_56.Controllers
             var UserId = _userManager.GetUserId(User);
             task.ExecutorId = UserId;
             _context.SaveChanges();
+            _taskService.ChangeTask(task);
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> Close(int id)
@@ -141,6 +144,7 @@ namespace homework_56.Controllers
                 task.CloseDate = DateTime.Now;
                 task.Status = "closed";
                 _context.SaveChanges();
+                _taskService.ChangeTask(task);
                 return RedirectToAction("Index");
             }
             else
@@ -152,7 +156,7 @@ namespace homework_56.Controllers
         {
             if (id != null)
             {
-                var task = await _context.Tasks.FirstOrDefaultAsync(p => p.Id == id);
+                var task = await _taskService.GetTask((int)id);
                 var currentUser = _context.Users.FirstOrDefault(u => u.Id == _userManager.GetUserId(User));
                 if (task.CreatorId == _userManager.GetUserId(User) || await _userManager.IsInRoleAsync(currentUser, "admin"))
                 {
@@ -182,7 +186,7 @@ namespace homework_56.Controllers
         }
         public IActionResult MyTasks()
         {
-            var tasks = _context.Tasks.Where(t => t.ExecutorId ==_userManager.GetUserId(User));
+            var tasks = _context.Tasks.Where(t => t.ExecutorId == _userManager.GetUserId(User));
             return View(tasks.ToList());
         }
         public IActionResult CreatedTasks()
